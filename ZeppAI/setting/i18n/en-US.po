@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ZeppAI\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "searchHint"
+msgstr "The AI will search the web when it needs recent information or to verify facts."

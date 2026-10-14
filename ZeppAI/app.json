@@ -1,0 +1,92 @@
+{
+  "configVersion": "v3",
+  "app": {
+    "appId": 20501,
+    "appName": "ZeppAI",
+    "appType": "app",
+    "version": {
+      "code": 5,
+      "name": "1.0.4"
+    },
+    "icon": "icon.png",
+    "vender": "zepp",
+    "description": "Agente de IA en el reloj"
+  },
+  "permissions": [
+    "data:os.device.info"
+  ],
+  "runtime": {
+    "apiVersion": {
+        "compatible": "4.0.0",
+        "target": "4.0.0",
+        "minVersion": "4.0"
+    }
+  },
+  "targets": {
+    "round": {
+      "module": {
+        "page": {
+          "pages": [
+            "page/index.page",
+            "page/chat.page"
+          ]
+        },
+        "app-side": {
+          "path": "app-side/index"
+        },
+        "setting": {
+          "path": "setting/index"
+        }
+      },
+      "platforms": [
+        {
+          "name": "active2round",
+          "deviceSource": 8913153,
+          "st": "r",
+          "sr": "w466"
+        },
+        {
+          "name": "active2round-cn",
+          "deviceSource": 8913155,
+          "st": "r",
+          "sr": "w466"
+        },
+        {
+          "name": "active2round-eu",
+          "deviceSource": 8913159,
+          "st": "r",
+          "sr": "w466"
+        },
+        {
+          "name": "active2round-global",
+          "deviceSource": 10092801,
+          "st": "r",
+          "sr": "w466"
+        },
+        {
+          "name": "active2round-global2",
+          "deviceSource": 10092803,
+          "st": "r",
+          "sr": "w466"
+        },
+        {
+          "name": "active2round-global3",
+          "deviceSource": 10092807,
+          "st": "r",
+          "sr": "w466"
+        }
+      ],
+      "designWidth": 466
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "ZeppAI"
+    },
+    "es-ES": {
+      "appName": "ZeppAI"
+    }
+  },
+  "defaultLanguage": "es-ES",
+  "debug": true
+}

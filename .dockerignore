@@ -1,0 +1,5 @@
+*
+!simulator_2.1.2_linux_amd64.deb
+!docker/
+!docker/simulator/
+!docker/simulator/Dockerfile

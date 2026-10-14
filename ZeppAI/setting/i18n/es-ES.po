@@ -1,0 +1,2 @@
+msgid "searchHint"
+msgstr "La IA buscará en la web cuando necesite información reciente o verificar datos."
