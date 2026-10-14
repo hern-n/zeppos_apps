@@ -1,0 +1,16 @@
+{
+  "name": "zeppnotes",
+  "version": "1.0.0",
+  "description": "Notas 100% locales para Amazfit Active 2 Round (Zepp OS)",
+  "private": true,
+  "scripts": {
+    "dev": "zeus dev",
+    "build": "zeus build",
+    "preview": "zeus preview",
+    "clean": "rm -rf dist build .zeus",
+    "test": "node tests/note-utils.test.js"
+  },
+  "devDependencies": {
+    "@zeppos/zeus-cli": "^1.9.3"
+  }
+}
