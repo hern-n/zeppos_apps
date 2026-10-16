@@ -17,9 +17,9 @@ export function canAdd(notes) {
 }
 
 /** Titulo derivado: primera linea recortada a TITLE_PREVIEW_CHARS. */
-export function noteTitle(content) {
+export function noteTitle(content, emptyLabel) {
   const first = String(content || '').split('\n')[0].trim()
-  if (!first) return '(vacía)'
+  if (!first) return emptyLabel === undefined ? '(vacía)' : emptyLabel
   return first.length > TITLE_PREVIEW_CHARS
     ? first.slice(0, TITLE_PREVIEW_CHARS) + '…'
     : first

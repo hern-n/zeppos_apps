@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ZeppNotes\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "notesTitle"
+msgstr "Notas"
+
+msgid "notesEmpty"
+msgstr "Sin notas.\nToca \"+ Nueva\" para crear la primera."
+
+msgid "newNote"
+msgstr "+ Nueva"
+
+msgid "limitFull"
+msgstr "Límite 20/20"
+
+msgid "listError"
+msgstr "Error al abrir las notas. Cierra y vuelve a abrir."
+
+msgid "emptyNote"
+msgstr "(vacía)"
+
+msgid "detailMissing"
+msgstr "Nota no encontrada.\nPuede que se borrara."
+
+msgid "back"
+msgstr "Atrás"
+
+msgid "edit"
+msgstr "Editar"
+
+msgid "delete"
+msgstr "Borrar"
+
+msgid "confirmDelete"
+msgstr "¿Seguro?"
+
+msgid "charsShort"
+msgstr "car."
+
+msgid "editorNew"
+msgstr "Nueva nota"
+
+msgid "editorEdit"
+msgstr "Editar nota"
+
+msgid "writeHint"
+msgstr "Toca \"Escribir\" o \"Dictar\" para añadir texto."
+
+msgid "write"
+msgstr "Escribir"
+
+msgid "dictate"
+msgstr "Dictar"
+
+msgid "save"
+msgstr "Guardar"
+
+msgid "cancel"
+msgstr "Cancelar"
+
+msgid "voiceNA"
+msgstr "Voz no disponible: usa \"Escribir\""
+
+msgid "limitWord"
+msgstr "Límite"
+
+msgid "charsUnit"
+msgstr "caracteres"
+
+msgid "notesUnit"
+msgstr "notas"
+
+msgid "emptyFirst"
+msgstr "Escribe algo primero"
+
+msgid "saveFail"
+msgstr "No se pudo guardar"
+
+msgid "keyboardNA"
+msgstr "Teclado no disponible"

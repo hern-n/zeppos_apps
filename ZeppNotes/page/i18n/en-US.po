@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ZeppNotes\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "notesTitle"
+msgstr "Notes"
+
+msgid "notesEmpty"
+msgstr "No notes yet.\nTap \"+ New\" to create the first one."
+
+msgid "newNote"
+msgstr "+ New"
+
+msgid "limitFull"
+msgstr "Limit 20/20"
+
+msgid "listError"
+msgstr "Could not open the notes. Close and reopen."
+
+msgid "emptyNote"
+msgstr "(empty)"
+
+msgid "detailMissing"
+msgstr "Note not found.\nIt may have been deleted."
+
+msgid "back"
+msgstr "Back"
+
+msgid "edit"
+msgstr "Edit"
+
+msgid "delete"
+msgstr "Delete"
+
+msgid "confirmDelete"
+msgstr "Sure?"
+
+msgid "charsShort"
+msgstr "ch."
+
+msgid "editorNew"
+msgstr "New note"
+
+msgid "editorEdit"
+msgstr "Edit note"
+
+msgid "writeHint"
+msgstr "Tap \"Write\" or \"Dictate\" to add text."
+
+msgid "write"
+msgstr "Write"
+
+msgid "dictate"
+msgstr "Dictate"
+
+msgid "save"
+msgstr "Save"
+
+msgid "cancel"
+msgstr "Cancel"
+
+msgid "voiceNA"
+msgstr "Voice unavailable: use \"Write\""
+
+msgid "limitWord"
+msgstr "Limit"
+
+msgid "charsUnit"
+msgstr "characters"
+
+msgid "notesUnit"
+msgstr "notes"
+
+msgid "emptyFirst"
+msgstr "Write something first"
+
+msgid "saveFail"
+msgstr "Could not save"
+
+msgid "keyboardNA"
+msgstr "Keyboard unavailable"

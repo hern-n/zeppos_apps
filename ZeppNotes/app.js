@@ -1,13 +1,16 @@
 import './shared/device-polyfill'
+import { log } from '@zos/utils'
+
+const logger = log.getLogger('zeppnotes-app')
 
 App({
   globalData: {},
 
   onCreate(options) {
-    console.log('[zeppnotes] onCreate', options)
+    logger.log('[lifecycle] onCreate', options)
   },
 
   onDestroy(options) {
-    console.log('[zeppnotes] onDestroy', options)
+    logger.log('[lifecycle] onDestroy', options)
   }
 })

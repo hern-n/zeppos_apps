@@ -1,9 +1,11 @@
 import { createWidget, widget, prop, align, text_style } from '@zos/ui'
 import { px, log } from '@zos/utils'
+import { getText } from '@zos/i18n'
 import { push } from '@zos/router'
 import { MAX_NOTES } from '../utils/constants.js'
 import { loadNotes } from '../utils/store.js'
 import { noteTitle, formatDate } from '../utils/note-utils.js'
+import { reportError } from '../utils/error-utils.js'
 
 const logger = log.getLogger('zeppnotes-list')
 
@@ -15,7 +17,12 @@ Page({
 
   onInit() {
     logger.log('[lifecycle] list onInit')
-    this.state.notes = loadNotes()
+    try {
+      this.state.notes = loadNotes()
+    } catch (error) {
+      reportError(logger, '[notes] loadNotes', error)
+      this.state.notes = []
+    }
   },
 
   build() {
@@ -23,13 +30,13 @@ Page({
     try {
       this.buildUI()
     } catch (error) {
-      logger.error('No se pudo construir la lista', error)
+      reportError(logger, '[list] build', error)
       createWidget(widget.TEXT, {
         x: px(20),
         y: px(188),
         w: px(426),
         h: px(90),
-        text: 'Error al abrir las notas. Cierra y vuelve a abrir.',
+        text: getText('listError'),
         color: 0xff6666,
         text_size: px(30),
         align_h: align.CENTER_H,
@@ -46,7 +53,7 @@ Page({
       y: px(24),
       w: px(466),
       h: px(48),
-      text: 'Notas (' + notes.length + '/' + MAX_NOTES + ')',
+      text: getText('notesTitle') + ' (' + notes.length + '/' + MAX_NOTES + ')',
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(40),
@@ -61,7 +68,7 @@ Page({
         y: px(170),
         w: px(386),
         h: px(120),
-        text: 'Sin notas.\nToca "+ Nueva" para crear la primera.',
+        text: getText('notesEmpty'),
         align_h: align.CENTER_H,
         text_style: {
           text_size: px(32),
@@ -80,7 +87,7 @@ Page({
       y: px(382),
       w: px(200),
       h: px(64),
-      text: full ? 'Límite 20/20' : '+ Nueva',
+      text: full ? getText('limitFull') : getText('newNote'),
       radius: px(32),
       normal_color: full ? 0x3a3a42 : 0x1f6feb,
       pressed_color: full ? 0x3a3a42 : 0x1550b0,
@@ -110,7 +117,7 @@ Page({
         y: i * (itemH + gap),
         w: px(406),
         h: itemH,
-        text: noteTitle(note.content) + '\n' + formatDate(note.updatedAt),
+        text: noteTitle(note.content, getText('emptyNote')) + '\n' + formatDate(note.updatedAt),
         radius: px(18),
         normal_color: 0x2d2d34,
         pressed_color: 0x48484f,

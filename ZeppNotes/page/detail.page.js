@@ -1,8 +1,10 @@
 import { createWidget, widget, prop, align, text_style, getTextLayout } from '@zos/ui'
 import { px, log } from '@zos/utils'
+import { getText } from '@zos/i18n'
 import { push, back } from '@zos/router'
 import { getNote, removeNote } from '../utils/store.js'
 import { noteTitle, formatDate, parsePageParams } from '../utils/note-utils.js'
+import { reportError } from '../utils/error-utils.js'
 
 const logger = log.getLogger('zeppnotes-detail')
 
@@ -18,7 +20,12 @@ Page({
     const { id } = parsePageParams(params)
     logger.log('[lifecycle] detail onInit', { id })
     this.state.noteId = typeof id === 'string' ? id : ''
-    this.state.note = this.state.noteId ? getNote(this.state.noteId) : null
+    try {
+      this.state.note = this.state.noteId ? getNote(this.state.noteId) : null
+    } catch (error) {
+      reportError(logger, '[notes] getNote', error)
+      this.state.note = null
+    }
     this.state.confirmDelete = false
   },
 
@@ -30,7 +37,7 @@ Page({
       }
       this.buildUI()
     } catch (error) {
-      logger.error('No se pudo construir el detalle', error)
+      reportError(logger, '[detail] build', error)
     }
   },
 
@@ -40,7 +47,7 @@ Page({
       y: px(170),
       w: px(386),
       h: px(100),
-      text: 'Nota no encontrada.\nPuede que se borrara.',
+      text: getText('detailMissing'),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(32),
@@ -53,7 +60,7 @@ Page({
       y: px(330),
       w: px(180),
       h: px(64),
-      text: 'Atrás',
+      text: getText('back'),
       radius: px(32),
       normal_color: 0x2d2d34,
       pressed_color: 0x48484f,
@@ -71,7 +78,7 @@ Page({
       y: px(24),
       w: px(386),
       h: px(44),
-      text: noteTitle(note.content),
+      text: noteTitle(note.content, getText('emptyNote')),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(36),
@@ -85,7 +92,7 @@ Page({
       y: px(66),
       w: px(386),
       h: px(28),
-      text: formatDate(note.updatedAt) + ' · ' + note.content.length + ' car.',
+      text: formatDate(note.updatedAt) + ' · ' + note.content.length + ' ' + getText('charsShort'),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(24),
@@ -133,7 +140,7 @@ Page({
       y: px(340),
       w: px(160),
       h: px(58),
-      text: 'Editar',
+      text: getText('edit'),
       radius: px(29),
       normal_color: 0x1f6feb,
       pressed_color: 0x1550b0,
@@ -147,7 +154,7 @@ Page({
       y: px(340),
       w: px(160),
       h: px(58),
-      text: 'Borrar',
+      text: getText('delete'),
       radius: px(29),
       normal_color: 0x5a2020,
       pressed_color: 0x7a2a2a,
@@ -161,7 +168,7 @@ Page({
       y: px(404),
       w: px(140),
       h: px(48),
-      text: 'Atrás',
+      text: getText('back'),
       radius: px(24),
       normal_color: 0x2d2d34,
       pressed_color: 0x48484f,
@@ -179,10 +186,10 @@ Page({
     // Doble toque para confirmar: evita borrados accidentales.
     if (!this.state.confirmDelete) {
       this.state.confirmDelete = true
-      this.deleteBtn.setProperty(prop.MORE, { text: '¿Seguro?' })
+      this.deleteBtn.setProperty(prop.MORE, { text: getText('confirmDelete') })
       setTimeout(() => {
         this.state.confirmDelete = false
-        if (this.deleteBtn) this.deleteBtn.setProperty(prop.MORE, { text: 'Borrar' })
+        if (this.deleteBtn) this.deleteBtn.setProperty(prop.MORE, { text: getText('delete') })
       }, 3000)
       return
     }

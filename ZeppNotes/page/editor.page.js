@@ -4,11 +4,13 @@ import {
   getTextLayout
 } from '@zos/ui'
 import { px, log } from '@zos/utils'
+import { getText } from '@zos/i18n'
 import { back } from '@zos/router'
 import { Vibrator, VIBRATOR_SCENE_NOTIFICATION } from '@zos/sensor'
 import { MAX_CHARS, MAX_NOTES } from '../utils/constants.js'
 import { loadNotes, getNote, upsertNote } from '../utils/store.js'
 import { clampContent, createNote, parsePageParams } from '../utils/note-utils.js'
+import { reportError } from '../utils/error-utils.js'
 
 const logger = log.getLogger('zeppnotes-editor')
 
@@ -46,7 +48,7 @@ Page({
       this.buildUI()
       this.renderDraft()
     } catch (error) {
-      logger.error('No se pudo construir el editor', error)
+      reportError(logger, '[editor] build', error)
     }
   },
 
@@ -56,7 +58,7 @@ Page({
       y: px(20),
       w: px(466),
       h: px(44),
-      text: this.state.isNew ? 'Nueva nota' : 'Editar nota',
+      text: this.state.isNew ? getText('editorNew') : getText('editorEdit'),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(38),
@@ -119,7 +121,7 @@ Page({
       y: px(324),
       w: px(160),
       h: px(56),
-      text: 'Escribir',
+      text: getText('write'),
       radius: px(28),
       normal_color: 0x2d2d34,
       pressed_color: 0x48484f,
@@ -133,7 +135,7 @@ Page({
       y: px(324),
       w: px(160),
       h: px(56),
-      text: 'Dictar',
+      text: getText('dictate'),
       radius: px(28),
       normal_color: 0x2d2d34,
       pressed_color: 0x48484f,
@@ -148,7 +150,7 @@ Page({
       y: px(388),
       w: px(160),
       h: px(56),
-      text: 'Guardar',
+      text: getText('save'),
       radius: px(28),
       normal_color: 0x1f6feb,
       pressed_color: 0x1550b0,
@@ -162,7 +164,7 @@ Page({
       y: px(388),
       w: px(160),
       h: px(56),
-      text: 'Cancelar',
+      text: getText('cancel'),
       radius: px(28),
       normal_color: 0x2d2d34,
       pressed_color: 0x48484f,
@@ -174,7 +176,7 @@ Page({
 
   renderDraft() {
     const draft = this.state.draft || ''
-    const preview = draft || 'Toca "Escribir" o "Dictar" para añadir texto.'
+    const preview = draft || getText('writeHint')
     const baseH = px(196)
 
     const layout = getTextLayout(preview, {
@@ -216,7 +218,7 @@ Page({
   // derecha) alterna CHAR/NUM conservando el texto parcial.
   openKeyboard(withVoice) {
     if (withVoice && !this.voiceAvailable()) {
-      this.showError('Voz no disponible: usa "Escribir"')
+      this.showError(getText('voiceNA'))
       logger.log('[ui] dictado no disponible en este reloj')
       return
     }
@@ -260,8 +262,8 @@ Page({
         }
       })
     } catch (error) {
-      logger.error('No se pudo abrir el teclado', error)
-      this.showError('Teclado no disponible')
+      reportError(logger, '[editor] openKeyboard', error)
+      this.showError(getText('keyboardNA'))
     }
   },
 
@@ -272,7 +274,7 @@ Page({
         return !!keyboard.checkVoiceInputAvailable()
       }
     } catch (error) {
-      logger.error('No se pudo comprobar la voz', error)
+      reportError(logger, '[editor] voiceAvailable', error)
     }
     // Si el firmware no expone la comprobacion, intentamos abrir VOICE
     // igualmente: el sistema mostrara su propio error si no puede.
@@ -288,7 +290,7 @@ Page({
       next = clampContent(text)
     }
     const wasTruncated = next.length >= MAX_CHARS && text.length > 0
-    this.updateState({ draft: next, error: wasTruncated ? 'Límite: ' + MAX_CHARS + ' caracteres' : '' })
+    this.updateState({ draft: next, error: wasTruncated ? getText('limitWord') + ': ' + MAX_CHARS + ' ' + getText('charsUnit') : '' })
     this.renderDraft()
   },
 
@@ -297,11 +299,11 @@ Page({
   save() {
     const text = (this.state.draft || '').trim()
     if (!text) {
-      this.showError('Escribe algo primero')
+      this.showError(getText('emptyFirst'))
       return
     }
     if (this.state.isNew && loadNotes().length >= MAX_NOTES) {
-      this.showError('Límite: ' + MAX_NOTES + ' notas')
+      this.showError(getText('limitWord') + ': ' + MAX_NOTES + ' ' + getText('notesUnit'))
       return
     }
 
@@ -311,7 +313,7 @@ Page({
       : createNote(text)
 
     if (!note) {
-      this.showError('Escribe algo primero')
+      this.showError(getText('emptyFirst'))
       return
     }
 
@@ -319,8 +321,8 @@ Page({
     if (!result.ok) {
       logger.error('[notes] no se pudo guardar', result.reason)
       this.showError(result.reason === 'full'
-        ? 'Límite: ' + MAX_NOTES + ' notas'
-        : 'No se pudo guardar')
+        ? getText('limitWord') + ': ' + MAX_NOTES + ' ' + getText('notesUnit')
+        : getText('saveFail'))
       return
     }
 

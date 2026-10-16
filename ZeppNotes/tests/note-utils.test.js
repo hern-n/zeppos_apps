@@ -46,6 +46,7 @@ import('../utils/note-utils.js').then((u) => {
     test('noteTitle usa la primera linea recortada', () => {
       assert.strictEqual(noteTitle('Hola mundo\nsegunda'), 'Hola mundo')
       assert.strictEqual(noteTitle('   '), '(vacía)')
+      assert.strictEqual(noteTitle('   ', '(empty)'), '(empty)')
       assert.ok(noteTitle('a'.repeat(100)).length <= 34)
     })
     test('sortNotes recientes primero sin mutar', () => {
