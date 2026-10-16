@@ -34,10 +34,17 @@ Luego ejecuta `npm run dev`. La clave se copia al módulo de desarrollo
 ignorado por Git y se incluye en el paquete local de Zeus. Trata ese paquete
 como un secreto y no lo compartas.
 
-## Crear un paquete para instalar o distribuir
+## Probar en el reloj (`preview`, con tu clave por defecto)
 
-Ejecuta `npm run build` o `npm run preview`. Ambos generan primero una
-configuración limpia sin clave de desarrollo. En la app Zepp del móvil, abre
+Ejecuta `npm run preview`. Genera el paquete con la clave de tu `.env.local`
+ya incluida como valor por defecto, para no tener que escribirla a mano en el
+reloj. El `.zab` resultante **contiene tu clave**: está en `dist/` (ignorado
+por Git), no lo subas a GitHub ni lo compartas.
+
+## Crear un paquete limpio para distribuir
+
+Ejecuta `npm run build`. Genera primero una configuración limpia sin clave de
+desarrollo. En la app Zepp del móvil, abre
 los ajustes de ZeppAI e introduce la clave de Groq; esta configuración se
 guarda en el teléfono y el reloj nunca recibe la clave. La IA decide cuándo
 usar la búsqueda web para información reciente o para verificar datos.

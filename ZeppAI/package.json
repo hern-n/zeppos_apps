@@ -7,7 +7,7 @@
     "dev:config": "node scripts/dev-config.js",
     "dev": "npm run dev:config && zeus dev",
     "build": "node scripts/dev-config.js --release && zeus build",
-    "preview": "node scripts/dev-config.js --release && zeus preview",
+    "preview": "npm run dev:config && zeus preview",
     "clean": "rm -rf dist build .zeus"
   },
   "devDependencies": {
