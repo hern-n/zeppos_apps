@@ -1,8 +1,9 @@
 import { createWidget, widget, prop, align, text_style } from '@zos/ui'
 import { px, log } from '@zos/utils'
+import { getText } from '@zos/i18n'
 import { connectStatus } from '@zos/ble'
 import { replace } from '@zos/router'
-import { Vibrator, VIBRATOR_SCENE_SHORT_LIGHT } from '@zos/sensor'
+import { reportError } from '../utils/error-utils'
 
 const logger = log.getLogger('gate')
 
@@ -21,16 +22,25 @@ Page({
 
   build() {
     logger.log('[lifecycle] gate build')
-    this.buildGate()
-    this.check()
+    try {
+      this.buildGate()
+      this.check()
+    } catch (error) {
+      reportError(logger, '[gate] build', error)
+    }
   },
 
   check() {
-    const connected = connectStatus()
+    let connected = false
+    try {
+      connected = connectStatus()
+    } catch (error) {
+      reportError(logger, '[ble] connectStatus', error)
+    }
     logger.log('[ble] connectStatus', connected)
 
     if (this.stateText) {
-      this.stateText.setProperty(prop.TEXT, connected ? 'Conectado' : 'Sin conexion')
+      this.stateText.setProperty(prop.TEXT, connected ? getText('gateConnected') : getText('gateOffline'))
       this.stateText.setProperty(prop.COLOR, connected ? 0x00e000 : 0xff5500)
     }
 
@@ -49,10 +59,8 @@ Page({
 
   retry() {
     logger.log('[ble] reintento solicitado')
-    const vibrator = new Vibrator()
-    vibrator.start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
 
-    this.stateText.setProperty(prop.TEXT, 'Buscando...')
+    this.stateText.setProperty(prop.TEXT, getText('gateSearching'))
     this.stateText.setProperty(prop.COLOR, 0xaaaaaa)
 
     setTimeout(() => this.check(), 600)
@@ -64,7 +72,7 @@ Page({
       y: px(50),
       w: px(466),
       h: px(60),
-      text: 'ZeppAI',
+      text: getText('gateTitle'),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(56),
@@ -78,7 +86,7 @@ Page({
       y: px(118),
       w: px(414),
       h: px(140),
-      text: 'Conecta el movil\npara poder usar la IA.\n\nSin conexion, la app\nno funciona.',
+      text: getText('gateBody'),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(38),
@@ -93,7 +101,7 @@ Page({
       y: px(268),
       w: px(414),
       h: px(44),
-      text: 'Buscando...',
+      text: getText('gateSearching'),
       align_h: align.CENTER_H,
       text_style: {
         text_size: px(34),
@@ -107,7 +115,7 @@ Page({
       y: px(330),
       w: px(220),
       h: px(80),
-      text: 'Reintentar',
+      text: getText('gateRetry'),
       radius: px(40),
       normal_color: 0x1f6feb,
       pressed_color: 0x1550b0,

@@ -6,7 +6,7 @@ const assert = require('assert')
 
 // El modulo usa ES modules; los cargamos como ESM desde un .mjs temporal
 // para poder ejecutarlos con Node sin configurar el proyecto.
-import('../utils/message-utils.js').then(({ parseSearchPrefix, splitIntoChunks, limitHistory }) => {
+import('../utils/message-utils.js').then(({ splitIntoChunks, limitHistory }) => {
   let passed = 0
   const test = (name, fn) => {
     try {
@@ -19,55 +19,6 @@ import('../utils/message-utils.js').then(({ parseSearchPrefix, splitIntoChunks, 
       process.exitCode = 1
     }
   }
-
-  console.log('\nparseSearchPrefix')
-
-  test('mensaje normal NO activa busqueda', () => {
-    const r = parseSearchPrefix('hola que tal')
-    assert.strictEqual(r.search, false)
-    assert.strictEqual(r.content, 'hola que tal')
-  })
-
-  test('! al inicio SI activa busqueda y quita el prefijo', () => {
-    const r = parseSearchPrefix('!noticias de hoy')
-    assert.strictEqual(r.search, true)
-    assert.strictEqual(r.content, 'noticias de hoy')
-  })
-
-  test('! sin texto despues no envia nada', () => {
-    const r = parseSearchPrefix('!   ')
-    assert.strictEqual(r.search, true)
-    assert.strictEqual(r.content, '')
-  })
-
-  test('solo el primer caracter cuenta: mid-string NO activa', () => {
-    const r = parseSearchPrefix('hola! que tal')
-    assert.strictEqual(r.search, false)
-    assert.strictEqual(r.content, 'hola! que tal')
-  })
-
-  test('varios signos exclamacion quitan solo el primero', () => {
-    const r = parseSearchPrefix('!!doble')
-    assert.strictEqual(r.search, true)
-    assert.strictEqual(r.content, '!doble')
-  })
-
-  test('espacios alrededor se recortan', () => {
-    const r = parseSearchPrefix('   !buscar esto   ')
-    assert.strictEqual(r.search, true)
-    assert.strictEqual(r.content, 'buscar esto')
-  })
-
-  test('cadena vacia no rompe', () => {
-    const r = parseSearchPrefix('')
-    assert.strictEqual(r.search, false)
-    assert.strictEqual(r.content, '')
-  })
-
-  test('undefined / null no rompen', () => {
-    assert.strictEqual(parseSearchPrefix(undefined).search, false)
-    assert.strictEqual(parseSearchPrefix(null).search, false)
-  })
 
   console.log('\nsplitIntoChunks')
 

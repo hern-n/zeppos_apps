@@ -1,29 +1,10 @@
 /**
- * Logica pura compartida: deteccion del prefijo de busqueda y troceado de texto.
- * Sin dependencias de Zepp OS, para poder testearlo en Node.
- */
-
-export const SEARCH_PREFIX = '!'
-
-/**
- * Decide si un mensaje lleva busqueda web y limpia el prefijo.
- * Regla fija, aplicada por el algoritmo y no por la IA:
- *   - empieza por '!'  => hay busqueda
- *   - en cualquier otro caso => no la hay
+ * Logica pura compartida: troceado de texto para el streaming BLE y recorte
+ * del historial de sesion. Sin dependencias de Zepp OS, testeable en Node.
  *
- * @param {string} raw texto tal cual lo escribio el usuario
- * @returns {{ search: boolean, content: string }} search indica si hay
- *   busqueda; content es el texto ya sin el prefijo '!'.
+ * La busqueda web la decide el modelo en el servidor (tool browser_search
+ * en app-side para los modelos gpt-oss): no hay prefijo en el reloj.
  */
-export function parseSearchPrefix(raw) {
-  const text = String(raw === undefined || raw === null ? '' : raw).trim()
-
-  if (text.charAt(0) === SEARCH_PREFIX) {
-    return { search: true, content: text.slice(SEARCH_PREFIX.length).trim() }
-  }
-
-  return { search: false, content: text }
-}
 
 /**
  * Trocea el texto en trozos de como mucho `size` caracteres,

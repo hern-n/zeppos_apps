@@ -1,13 +1,15 @@
 import { createWidget, widget, prop, align, text_style, createKeyboard, deleteKeyboard, inputType, getTextLayout } from '@zos/ui'
 import { px, log } from '@zos/utils'
+import { getText } from '@zos/i18n'
 import { connectStatus } from '@zos/ble'
 import { replace } from '@zos/router'
-import { Vibrator, VIBRATOR_SCENE_SHORT_LIGHT, VIBRATOR_SCENE_NOTIFICATION } from '@zos/sensor'
+import { Vibrator, VIBRATOR_SCENE_NOTIFICATION } from '@zos/sensor'
 import {
   MAX_HISTORY_MESSAGES,
   MAX_MESSAGE_CHARS
 } from '../utils/constants'
 import { limitHistory } from '../utils/message-utils'
+import { reportError } from '../utils/error-utils'
 
 const logger = log.getLogger('chat')
 
@@ -27,7 +29,12 @@ Page({
     logger.log('[lifecycle] chat onInit')
     this.streamingText = ''
     this.reqId = 0
-    this.disconnected = !connectStatus()
+    try {
+      this.disconnected = !connectStatus()
+    } catch (error) {
+      reportError(logger, '[ble] connectStatus', error)
+      this.disconnected = true
+    }
     logger.log('[ble] estado al iniciar chat', { connected: !this.disconnected })
     if (this.disconnected) {
       replace({ url: 'page/index.page' })
@@ -45,13 +52,13 @@ Page({
     try {
       this.buildUI()
     } catch (error) {
-      logger.error('No se pudo construir la pantalla de chat', error)
+      reportError(logger, '[chat] build', error)
       createWidget(widget.TEXT, {
         x: px(20),
         y: px(188),
         w: px(426),
         h: px(90),
-        text: 'Error al abrir el chat. Cierra y vuelve a abrir ZeppAI.',
+        text: getText('chatBuildError'),
         color: 0xff6666,
         text_size: px(30),
         align_h: align.CENTER_H,
@@ -65,7 +72,7 @@ Page({
       ? app._options.globalData.messageBuilder
       : null
     if (!messageBuilder) {
-      this.draftText.setProperty(prop.TEXT, 'Reinicia la app Zepp en el móvil')
+      this.draftText.setProperty(prop.TEXT, getText('chatNoService'))
       this.draftText.setProperty(prop.COLOR, 0xff6666)
       logger.error('No hay conexión con el servicio del móvil')
       return
@@ -73,7 +80,14 @@ Page({
     logger.log('[ble] MessageBuilder disponible; registrando listener call')
 
     this.streamHandler = (ctx) => {
-      this.onStream(messageBuilder.buf2Json(ctx.payload))
+      let data = null
+      try {
+        data = messageBuilder.buf2Json(ctx.payload)
+      } catch (error) {
+        reportError(logger, '[chat] mensaje ilegible del móvil', error)
+        return
+      }
+      this.onStream(data)
     }
     messageBuilder.on('call', this.streamHandler)
 
@@ -91,7 +105,7 @@ Page({
       y: px(20),
       w: px(180),
       h: px(64),
-      text: 'Enviar',
+      text: getText('chatSend'),
       radius: px(32),
       normal_color: 0x1f6feb,
       pressed_color: 0x1550b0,
@@ -118,7 +132,7 @@ Page({
       y: 0,
       w: px(426),
       h: px(254),
-      text: 'Aquí aparecerán las respuestas de la IA.',
+      text: getText('chatEmpty'),
       color: 0xffffff,
       text_size: px(28),
       text_style: text_style.WRAP
@@ -145,7 +159,7 @@ Page({
       y: px(384),
       w: px(140),
       h: px(54),
-      text: 'Escribir',
+      text: getText('chatWrite'),
       radius: px(27),
       normal_color: 0x2d2d34,
       pressed_color: 0x48484f,
@@ -159,7 +173,7 @@ Page({
       y: px(384),
       w: px(140),
       h: px(54),
-      text: 'Enviar',
+      text: getText('chatSend'),
       radius: px(27),
       normal_color: 0x1f6feb,
       pressed_color: 0x1550b0,
@@ -176,7 +190,7 @@ Page({
 
     if (this.state.streaming) answers.push(this.state.streaming)
 
-    const transcript = answers.join('\n\n') || 'Aquí aparecerán las respuestas de la IA.'
+    const transcript = answers.join('\n\n') || getText('chatEmpty')
 
     const layout = getTextLayout(transcript, {
       text_size: px(28),
@@ -265,8 +279,8 @@ Page({
         }
       })
     } catch (error) {
-      logger.error('No se pudo abrir el teclado', error)
-      this.updateState({ draft: 'Teclado no disponible' })
+      reportError(logger, '[chat] openKeyboard', error)
+      this.updateState({ draft: getText('chatNoKeyboard') })
       this.renderDraft()
     }
   },
@@ -286,8 +300,6 @@ Page({
     if (!raw) return
 
     const content = raw
-
-    new Vibrator().start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
 
     const messages = limitHistory(
       this.state.messages.concat([{ role: 'user', content: content }]),
@@ -312,7 +324,7 @@ Page({
       ? app._options.globalData.messageBuilder
       : null
     if (!messageBuilder) {
-      this.fail('Reinicia la app Zepp en el móvil')
+      this.fail(getText('chatNoService'))
       return
     }
 
@@ -323,8 +335,8 @@ Page({
         messages: messages.map((m) => ({ role: m.role, content: m.content }))
       })
       .catch((err) => {
-        logger.error('[chat] fallo al enviar por MessageBuilder', err)
-        this.fail('No se pudo enviar')
+        reportError(logger, '[chat] MessageBuilder.call', err)
+        this.fail(getText('chatSendFail'))
       })
   },
 
@@ -376,7 +388,7 @@ Page({
 
   renderDraft() {
     const { sending, error } = this.state
-    const text = error || (sending ? 'Pensando...' : '')
+    const text = error || (sending ? getText('chatThinking') : '')
     this.draftText.setProperty(prop.TEXT, text)
     this.draftText.setProperty(prop.COLOR, error ? 0xff7777 : 0xaaaaaa)
   },

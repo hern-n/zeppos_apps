@@ -29,9 +29,6 @@ export const STREAM_CHUNK_CHARS = 48
 export const STREAM_CHUNK_DELAY_MS = 60
 export const BLE_SAFE_CHUNK_BYTES = 900
 
-// Prefijo que activa la busqueda web (lo decide el algoritmo, no la IA)
-export const SEARCH_PREFIX = '!'
-
 // Claves de settings del movil
 export const KEY_SETTING_GROQ_KEY = 'groqApiKey'
 export const KEY_SETTING_MODEL = 'groqModel'

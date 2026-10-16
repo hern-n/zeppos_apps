@@ -1,0 +1,49 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ZeppAI\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "gateTitle"
+msgstr "ZeppAI"
+
+msgid "gateBody"
+msgstr "Conecta el movil\npara poder usar la IA.\n\nSin conexion, la app\nno funciona."
+
+msgid "gateSearching"
+msgstr "Buscando..."
+
+msgid "gateConnected"
+msgstr "Conectado"
+
+msgid "gateOffline"
+msgstr "Sin conexion"
+
+msgid "gateRetry"
+msgstr "Reintentar"
+
+msgid "chatEmpty"
+msgstr "Aquí aparecerán las respuestas de la IA."
+
+msgid "chatBuildError"
+msgstr "Error al abrir el chat. Cierra y vuelve a abrir ZeppAI."
+
+msgid "chatNoService"
+msgstr "Reinicia la app Zepp en el móvil"
+
+msgid "chatSend"
+msgstr "Enviar"
+
+msgid "chatWrite"
+msgstr "Escribir"
+
+msgid "chatThinking"
+msgstr "Pensando..."
+
+msgid "chatSendFail"
+msgstr "No se pudo enviar"
+
+msgid "chatNoKeyboard"
+msgstr "Teclado no disponible"

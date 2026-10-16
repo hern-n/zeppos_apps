@@ -1,2 +1,49 @@
-msgid "example"
-msgstr "This is an example in device"
+msgid ""
+msgstr ""
+"Project-Id-Version: ZeppAI\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "gateTitle"
+msgstr "ZeppAI"
+
+msgid "gateBody"
+msgstr "Connect your phone\nto use the AI.\n\nWithout connection,\nthe app does not work."
+
+msgid "gateSearching"
+msgstr "Searching..."
+
+msgid "gateConnected"
+msgstr "Connected"
+
+msgid "gateOffline"
+msgstr "Offline"
+
+msgid "gateRetry"
+msgstr "Retry"
+
+msgid "chatEmpty"
+msgstr "AI answers will appear here."
+
+msgid "chatBuildError"
+msgstr "Could not open the chat. Close and reopen ZeppAI."
+
+msgid "chatNoService"
+msgstr "Restart the Zepp app on your phone"
+
+msgid "chatSend"
+msgstr "Send"
+
+msgid "chatWrite"
+msgstr "Write"
+
+msgid "chatThinking"
+msgstr "Thinking..."
+
+msgid "chatSendFail"
+msgstr "Could not send"
+
+msgid "chatNoKeyboard"
+msgstr "Keyboard unavailable"
