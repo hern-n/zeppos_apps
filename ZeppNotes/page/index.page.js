@@ -1,7 +1,6 @@
 import { createWidget, widget, prop, align, text_style } from '@zos/ui'
 import { px, log } from '@zos/utils'
 import { push } from '@zos/router'
-import { Vibrator, VIBRATOR_SCENE_SHORT_LIGHT } from '@zos/sensor'
 import { MAX_NOTES } from '../utils/constants.js'
 import { loadNotes } from '../utils/store.js'
 import { noteTitle, formatDate } from '../utils/note-utils.js'
@@ -128,13 +127,11 @@ Page({
   },
 
   openNote(id) {
-    new Vibrator().start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
     push({ url: 'page/detail.page', params: { id } })
   },
 
   onNew() {
     if (this.state.notes.length >= MAX_NOTES) return
-    new Vibrator().start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
     push({ url: 'page/editor.page', params: { id: '' } })
   },
 

@@ -1,7 +1,6 @@
 import { createWidget, widget, prop, align, text_style, getTextLayout } from '@zos/ui'
 import { px, log } from '@zos/utils'
 import { push, back } from '@zos/router'
-import { Vibrator, VIBRATOR_SCENE_SHORT_LIGHT } from '@zos/sensor'
 import { getNote, removeNote } from '../utils/store.js'
 import { noteTitle, formatDate, parsePageParams } from '../utils/note-utils.js'
 
@@ -173,7 +172,6 @@ Page({
   },
 
   onEdit() {
-    new Vibrator().start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
     push({ url: 'page/editor.page', params: { id: this.state.noteId } })
   },
 
@@ -188,7 +186,6 @@ Page({
       }, 3000)
       return
     }
-    new Vibrator().start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
     removeNote(this.state.noteId)
     logger.log('[notes] nota borrada', { id: this.state.noteId })
     back()

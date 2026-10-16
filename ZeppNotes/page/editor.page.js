@@ -5,7 +5,7 @@ import {
 } from '@zos/ui'
 import { px, log } from '@zos/utils'
 import { back } from '@zos/router'
-import { Vibrator, VIBRATOR_SCENE_SHORT_LIGHT, VIBRATOR_SCENE_NOTIFICATION } from '@zos/sensor'
+import { Vibrator, VIBRATOR_SCENE_NOTIFICATION } from '@zos/sensor'
 import { MAX_CHARS, MAX_NOTES } from '../utils/constants.js'
 import { loadNotes, getNote, upsertNote } from '../utils/store.js'
 import { clampContent, createNote, parsePageParams } from '../utils/note-utils.js'
@@ -332,7 +332,6 @@ Page({
 
   cancel() {
     logger.log('[ui] edicion cancelada')
-    new Vibrator().start({ mode: VIBRATOR_SCENE_SHORT_LIGHT })
     deleteKeyboard()
     back()
   },
