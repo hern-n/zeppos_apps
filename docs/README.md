@@ -23,6 +23,7 @@ Mini Program en JavaScript para **Amazfit Active 2 redondo (esfera circular)**.
 3. `03-api-mini-program.md` — cómo se programa en JS, módulos `@zos/*`, sensores.
 4. `04-tooling-flujo.md` — Node + Zeus CLI + simulador + despliegue.
 5. `05-referencias.md` — enlaces oficiales y mirror.
+6. `06-best-practices.md` — resumen local de las 10 best practices oficiales con ejemplos del repo.
 
 ## Fuentes base
 
