@@ -8,8 +8,8 @@
  */
 import { localStorage } from '@zos/storage'
 import { readFileSync, writeFileSync, statSync } from '@zos/fs'
-import { STORAGE_KEY, STORAGE_FILE, MAX_NOTES } from './constants.js'
-import { sanitizeNotes, sortNotes } from './note-utils.js'
+import { STORAGE_KEY, STORAGE_FILE, MAX_NOTES, MAX_IMPORTANT } from './constants.js'
+import { sanitizeNotes, sortNotes, isImportant } from './note-utils.js'
 
 function readBackupFile() {
   try {
@@ -48,8 +48,21 @@ export function loadNotes() {
   }
 }
 
+/** Defensa: nunca se persisten mas de MAX_IMPORTANT notas fijadas. */
+function limitImportant(notes) {
+  let left = MAX_IMPORTANT
+  return notes.map((n) => {
+    if (!isImportant(n)) return n
+    if (left > 0) {
+      left -= 1
+      return n
+    }
+    return Object.assign({}, n, { important: false })
+  })
+}
+
 function persist(notes) {
-  const ordered = sortNotes(notes).slice(0, MAX_NOTES)
+  const ordered = limitImportant(sortNotes(notes).slice(0, MAX_NOTES))
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ordered))
   } catch (e) {
@@ -89,4 +102,28 @@ export function upsertNote(note) {
 export function removeNote(id) {
   const notes = loadNotes().filter((n) => n.id !== id)
   return persist(notes)
+}
+
+/**
+ * Fija/destilda una nota. Devuelve { notes, ok, reason, important }.
+ * reason: 'missing' si no existe, 'limit' si ya hay MAX_IMPORTANT fijadas.
+ */
+export function toggleImportant(id) {
+  const notes = loadNotes()
+  let target = null
+  for (let i = 0; i < notes.length; i += 1) {
+    if (notes[i].id === id) {
+      target = notes[i]
+      break
+    }
+  }
+  if (!target) return { notes, ok: false, reason: 'missing', important: false }
+
+  const next = !target.important
+  if (next && notes.filter(isImportant).length >= MAX_IMPORTANT) {
+    return { notes, ok: false, reason: 'limit', important: false }
+  }
+
+  const updated = notes.map((n) => (n.id === id ? Object.assign({}, n, { important: next }) : n))
+  return { notes: persist(updated), ok: true, reason: '', important: next }
 }

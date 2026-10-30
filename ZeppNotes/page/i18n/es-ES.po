@@ -10,10 +10,25 @@ msgid "notesTitle"
 msgstr "Notas"
 
 msgid "notesEmpty"
-msgstr "Sin notas.\nToca \"+ Nueva\" para crear la primera."
+msgstr "Sin notas todavía.\nToca el botón + para crear la primera."
 
-msgid "newNote"
-msgstr "+ Nueva"
+msgid "pin"
+msgstr "Fijar"
+
+msgid "unpin"
+msgstr "Soltar"
+
+msgid "pinLimit"
+msgstr "Máximo 3 fijadas"
+
+msgid "pinned"
+msgstr "fijadas"
+
+msgid "widgetEmpty"
+msgstr "Sin notas"
+
+msgid "widgetHint"
+msgstr "Abre la app para crear una."
 
 msgid "limitFull"
 msgstr "Límite 20/20"

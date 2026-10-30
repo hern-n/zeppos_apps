@@ -9,7 +9,8 @@ import('../utils/note-utils.js').then((u) => {
     const { MAX_NOTES, MAX_CHARS } = c
     const {
       clampContent, isFull, canAdd, noteTitle,
-      formatDate, sortNotes, createNote, sanitizeNotes, parsePageParams
+      formatDate, sortNotes, createNote, sanitizeNotes, parsePageParams,
+      isImportant, importantCount, canMarkImportant, orderedNotes, selectNotes
     } = u
 
     let passed = 0
@@ -76,6 +77,72 @@ import('../utils/note-utils.js').then((u) => {
     test('sanitizeNotes con no-array devuelve []', () => {
       assert.deepStrictEqual(sanitizeNotes(null), [])
       assert.deepStrictEqual(sanitizeNotes('{}'), [])
+    })
+
+    console.log('\nfavoritas')
+    test('MAX_IMPORTANT = 3, WIDGET_NOTES = 3, CARD_NOTES = 2', () => {
+      assert.strictEqual(c.MAX_IMPORTANT, 3)
+      assert.strictEqual(c.WIDGET_NOTES, 3)
+      assert.strictEqual(c.CARD_NOTES, 2)
+    })
+    test('createNote nace sin fijar y sanitizeNotes respeta el flag', () => {
+      assert.strictEqual(createNote('hola').important, false)
+      const out = sanitizeNotes([
+        { id: 'a', content: 'fijada', updatedAt: 1, important: true },
+        { id: 'b', content: 'normal', updatedAt: 2, important: 'yes' }
+      ])
+      assert.strictEqual(isImportant(out.find((n) => n.id === 'a')), true)
+      assert.strictEqual(isImportant(out.find((n) => n.id === 'b')), false)
+    })
+    test('importantCount/canMarkImportant cortan en 3', () => {
+      const three = [
+        { id: '1', content: 'a', updatedAt: 1, important: true },
+        { id: '2', content: 'b', updatedAt: 2, important: true },
+        { id: '3', content: 'c', updatedAt: 3, important: true }
+      ]
+      assert.strictEqual(importantCount(three), 3)
+      assert.strictEqual(canMarkImportant(three), false)
+      assert.strictEqual(canMarkImportant(three.slice(0, 2)), true)
+      assert.strictEqual(canMarkImportant(null), true)
+    })
+    test('orderedNotes: fijadas primero y despues por recencia', () => {
+      const notes = [
+        { id: 'r1', content: 'reciente', updatedAt: 90 },
+        { id: 'p1', content: 'fijada vieja', updatedAt: 10, important: true },
+        { id: 'r2', content: 'antigua', updatedAt: 20 },
+        { id: 'p2', content: 'fijada nueva', updatedAt: 50, important: true }
+      ]
+      assert.deepStrictEqual(orderedNotes(notes).map((n) => n.id), ['p2', 'p1', 'r1', 'r2'])
+      assert.deepStrictEqual(notes.map((n) => n.id), ['r1', 'p1', 'r2', 'p2'])
+    })
+    test('selectNotes rellena con recientes si faltan fijadas', () => {
+      const notes = [
+        { id: 'r1', content: 'x', updatedAt: 90 },
+        { id: 'r2', content: 'x', updatedAt: 80 },
+        { id: 'p1', content: 'x', updatedAt: 10, important: true },
+        { id: 'r3', content: 'x', updatedAt: 70 }
+      ]
+      assert.deepStrictEqual(selectNotes(notes, 3).map((n) => n.id), ['p1', 'r1', 'r2'])
+      assert.deepStrictEqual(selectNotes(notes, 2).map((n) => n.id), ['p1', 'r1'])
+      assert.deepStrictEqual(selectNotes(notes, 0), [])
+      assert.deepStrictEqual(selectNotes(null, 3), [])
+    })
+    test('selectNotes sin fijadas usa las 3/2 mas recientes', () => {
+      const notes = [
+        { id: 'a', content: 'x', updatedAt: 1 },
+        { id: 'b', content: 'x', updatedAt: 3 },
+        { id: 'c', content: 'x', updatedAt: 2 },
+        { id: 'd', content: 'x', updatedAt: 4 }
+      ]
+      assert.deepStrictEqual(selectNotes(notes, 3).map((n) => n.id), ['d', 'b', 'c'])
+      assert.deepStrictEqual(selectNotes(notes, 2).map((n) => n.id), ['d', 'b'])
+    })
+    test('sanitizeNotes limita el listado a MAX_NOTES conservando fijadas', () => {
+      const raw = [{ id: 'a', content: 'fijada', updatedAt: 5, important: true }]
+      for (let i = 0; i < 30; i += 1) raw.push({ id: 'n' + i, content: 't' + i, updatedAt: i })
+      const out = sanitizeNotes(raw)
+      assert.strictEqual(out.length, 20)
+      assert.strictEqual(importantCount(out), 1)
     })
 
     console.log('\nrouter params')

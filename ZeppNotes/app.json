@@ -31,6 +31,39 @@
             "page/detail.page",
             "page/editor.page"
           ]
+        },
+        "secondary-widget": {
+          "widgets": [
+            {
+              "path": "secondary-widget/index",
+              "icon": "icon.png",
+              "preview": "preview.png",
+              "name": "ZeppNotes",
+              "runtime": {
+                "type": "js"
+              },
+              "i18n": {
+                "en-US": {
+                  "name": "ZeppNotes"
+                },
+                "es-ES": {
+                  "name": "ZeppNotes"
+                }
+              }
+            }
+          ]
+        },
+        "app-widget": {
+          "widgets": [
+            {
+              "path": "app-widget/index",
+              "icon": "icon.png",
+              "name": "ZeppNotes",
+              "runtime": {
+                "type": "js"
+              }
+            }
+          ]
         }
       },
       "platforms": [
@@ -76,10 +109,24 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "ZeppNotes"
+      "appName": "ZeppNotes",
+      "app-widget": {
+        "widgets": [
+          {
+            "name": "ZeppNotes"
+          }
+        ]
+      }
     },
     "es-ES": {
-      "appName": "ZeppNotes"
+      "appName": "ZeppNotes",
+      "app-widget": {
+        "widgets": [
+          {
+            "name": "ZeppNotes"
+          }
+        ]
+      }
     }
   },
   "defaultLanguage": "es-ES",

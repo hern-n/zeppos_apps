@@ -10,6 +10,7 @@ import { Vibrator, VIBRATOR_SCENE_NOTIFICATION } from '@zos/sensor'
 import { MAX_CHARS, MAX_NOTES } from '../utils/constants.js'
 import { loadNotes, getNote, upsertNote } from '../utils/store.js'
 import { clampContent, createNote, parsePageParams } from '../utils/note-utils.js'
+import { C } from '../utils/theme.js'
 import { reportError } from '../utils/error-utils.js'
 
 const logger = log.getLogger('zeppnotes-editor')
@@ -53,39 +54,45 @@ Page({
   },
 
   buildUI() {
+    createWidget(widget.FILL_RECT, {
+      x: 0,
+      y: 0,
+      w: px(466),
+      h: px(466),
+      color: C.bg
+    })
+
     createWidget(widget.TEXT, {
       x: 0,
-      y: px(20),
+      y: px(34),
       w: px(466),
-      h: px(44),
+      h: px(46),
       text: this.state.isNew ? getText('editorNew') : getText('editorEdit'),
       align_h: align.CENTER_H,
-      text_style: {
-        text_size: px(38),
-        color: 0xffffff,
-        text_align: align.CENTER_H
-      }
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(36),
+      color: C.text
     })
 
     this.counterText = createWidget(widget.TEXT, {
       x: 0,
-      y: px(62),
+      y: px(82),
       w: px(466),
-      h: px(28),
+      h: px(24),
       text: '',
       align_h: align.CENTER_H,
-      text_style: {
-        text_size: px(24),
-        color: 0x888888,
-        text_align: align.CENTER_H
-      }
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(22),
+      color: C.textDim
     })
 
     this.viewport = createWidget(widget.VIEW_CONTAINER, {
-      x: px(30),
-      y: px(94),
-      w: px(406),
-      h: px(196),
+      x: px(50),
+      y: px(112),
+      w: px(366),
+      h: px(174),
       scroll_enable: 1,
       pos_y: 0
     })
@@ -93,83 +100,73 @@ Page({
     this.draftText = this.viewport.createWidget(widget.TEXT, {
       x: 0,
       y: 0,
-      w: px(406),
-      h: px(196),
+      w: px(366),
+      h: px(174),
       text: '',
-      color: 0xffffff,
+      color: C.text,
       text_size: px(30),
       text_style: text_style.WRAP
     })
 
     this.errorText = createWidget(widget.TEXT, {
       x: px(40),
-      y: px(292),
+      y: px(288),
       w: px(386),
-      h: px(30),
+      h: px(24),
       text: '',
       align_h: align.CENTER_H,
-      text_style: {
-        text_size: px(24),
-        color: 0xff7777,
-        text_align: align.CENTER_H
-      }
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(22),
+      color: C.danger
     })
 
+    const btn = (opts) => createWidget(widget.BUTTON, Object.assign({
+      w: px(134),
+      h: px(46),
+      radius: px(23),
+      text_size: px(26)
+    }, opts))
+
     // Fila 1: Escribir (local) + Dictar (voz del sistema).
-    createWidget(widget.BUTTON, {
-      x: px(63),
-      y: px(324),
-      w: px(160),
-      h: px(56),
+    btn({
+      x: px(92),
+      y: px(314),
       text: getText('write'),
-      radius: px(28),
-      normal_color: 0x2d2d34,
-      pressed_color: 0x48484f,
-      color: 0xffffff,
-      text_size: px(26),
+      normal_color: C.surface,
+      press_color: C.surfacePressed,
+      color: C.text,
       click_func: () => this.openKeyboard(false)
     })
 
-    createWidget(widget.BUTTON, {
-      x: px(243),
-      y: px(324),
-      w: px(160),
-      h: px(56),
+    btn({
+      x: px(240),
+      y: px(314),
       text: getText('dictate'),
-      radius: px(28),
-      normal_color: 0x2d2d34,
-      pressed_color: 0x48484f,
-      color: 0xffffff,
-      text_size: px(26),
+      normal_color: C.surface,
+      press_color: C.surfacePressed,
+      color: C.text,
       click_func: () => this.openKeyboard(true)
     })
 
     // Fila 2: Guardar (local) + Cancelar.
-    createWidget(widget.BUTTON, {
-      x: px(63),
-      y: px(388),
-      w: px(160),
-      h: px(56),
+    btn({
+      x: px(92),
+      y: px(366),
       text: getText('save'),
-      radius: px(28),
-      normal_color: 0x1f6feb,
-      pressed_color: 0x1550b0,
+      normal_color: C.accent,
+      press_color: C.accentPressed,
       color: 0xffffff,
-      text_size: px(28),
       click_func: () => this.save()
     })
 
-    createWidget(widget.BUTTON, {
-      x: px(243),
-      y: px(388),
-      w: px(160),
-      h: px(56),
+    btn({
+      x: px(240),
+      y: px(366),
       text: getText('cancel'),
-      radius: px(28),
-      normal_color: 0x2d2d34,
-      pressed_color: 0x48484f,
-      color: 0xffffff,
-      text_size: px(28),
+      normal_color: C.surface,
+      press_color: C.surfacePressed,
+      color: C.textDim,
       click_func: () => this.cancel()
     })
   },
@@ -177,11 +174,11 @@ Page({
   renderDraft() {
     const draft = this.state.draft || ''
     const preview = draft || getText('writeHint')
-    const baseH = px(196)
+    const baseH = px(174)
 
     const layout = getTextLayout(preview, {
       text_size: px(30),
-      text_width: px(406),
+      text_width: px(366),
       wrapped: 1
     })
     const contentH = Math.max(
@@ -190,7 +187,7 @@ Page({
     )
 
     this.draftText.setProperty(prop.MORE, { text: preview, h: contentH })
-    this.draftText.setProperty(prop.COLOR, draft ? 0xffffff : 0x666666)
+    this.draftText.setProperty(prop.COLOR, draft ? C.text : C.textMuted)
     this.viewport.setProperty(prop.MORE, {
       pos_y: Math.max(0, contentH - baseH)
     })
@@ -200,7 +197,7 @@ Page({
     )
     this.counterText.setProperty(
       prop.COLOR,
-      draft.length >= MAX_CHARS ? 0xffaa00 : 0x888888
+      draft.length >= MAX_CHARS ? C.gold : C.textDim
     )
     if (this.errorText) {
       this.errorText.setProperty(prop.TEXT, this.state.error || '')
@@ -308,8 +305,14 @@ Page({
     }
 
     const existing = this.state.noteId ? getNote(this.state.noteId) : null
+    // Al editar se conserva si la nota estaba fijada.
     const note = existing
-      ? { id: existing.id, content: clampContent(text), updatedAt: Date.now() }
+      ? {
+        id: existing.id,
+        content: clampContent(text),
+        updatedAt: Date.now(),
+        important: existing.important === true
+      }
       : createNote(text)
 
     if (!note) {

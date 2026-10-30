@@ -2,7 +2,7 @@
  * Logica pura de ZeppNotes: sin dependencias de Zepp OS, testeable en Node.
  * La persistencia vive en utils/store.js; aqui solo transformaciones.
  */
-import { MAX_CHARS, MAX_NOTES, TITLE_PREVIEW_CHARS } from './constants.js'
+import { MAX_CHARS, MAX_NOTES, MAX_IMPORTANT, TITLE_PREVIEW_CHARS } from './constants.js'
 
 export function clampContent(raw) {
   return String(raw === undefined || raw === null ? '' : raw).slice(0, MAX_CHARS)
@@ -48,7 +48,49 @@ export function createNote(content) {
   const text = clampContent(content).trim()
   if (!text) return null
   const now = Date.now()
-  return { id: makeId(), content: text, updatedAt: now }
+  return { id: makeId(), content: text, updatedAt: now, important: false }
+}
+
+// ----------------------------------------------------------- Favoritas ----
+
+export function isImportant(note) {
+  return !!(note && note.important)
+}
+
+export function importantCount(notes) {
+  if (!Array.isArray(notes)) return 0
+  let n = 0
+  for (let i = 0; i < notes.length; i += 1) {
+    if (isImportant(notes[i])) n += 1
+  }
+  return n
+}
+
+/** Solo se pueden fijar MAX_IMPORTANT notas. */
+export function canMarkImportant(notes) {
+  return importantCount(notes) < MAX_IMPORTANT
+}
+
+/**
+ * Orden de lectura: fijadas primero (y dentro, las mas recientes),
+ * despues el resto por recencia. No muta el array de entrada.
+ */
+export function orderedNotes(notes) {
+  const list = Array.isArray(notes) ? notes : []
+  const pinned = []
+  const rest = []
+  for (let i = 0; i < list.length; i += 1) {
+    if (isImportant(list[i])) pinned.push(list[i])
+    else rest.push(list[i])
+  }
+  return sortNotes(pinned).concat(sortNotes(rest))
+}
+
+/** Las `count` notas a mostrar en el Widget / Shortcut Card. */
+export function selectNotes(notes, count) {
+  const limit = Number(count)
+  if (!limit || limit <= 0) return []
+  return orderedNotes(notes).slice(0, limit)
 }
 
 /** Sanea una lista cargada del almacenamiento: forma valida + limites. */
@@ -63,7 +105,8 @@ export function sanitizeNotes(raw) {
     out.push({
       id: String(n.id || makeId()),
       content,
-      updatedAt: Number(n.updatedAt) || 0
+      updatedAt: Number(n.updatedAt) || 0,
+      important: n.important === true
     })
   }
   return sortNotes(out)
