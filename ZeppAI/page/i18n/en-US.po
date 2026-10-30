@@ -36,8 +36,8 @@ msgstr "Restart the Zepp app on your phone"
 msgid "chatSend"
 msgstr "Send"
 
-msgid "chatWrite"
-msgstr "Write"
+msgid "chatPlaceholder"
+msgstr "Type a message…"
 
 msgid "chatThinking"
 msgstr "Thinking..."

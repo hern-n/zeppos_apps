@@ -4,6 +4,7 @@ import { getText } from '@zos/i18n'
 import { connectStatus } from '@zos/ble'
 import { replace } from '@zos/router'
 import { reportError } from '../utils/error-utils'
+import { C } from '../utils/theme'
 
 const logger = log.getLogger('gate')
 
@@ -41,7 +42,7 @@ Page({
 
     if (this.stateText) {
       this.stateText.setProperty(prop.TEXT, connected ? getText('gateConnected') : getText('gateOffline'))
-      this.stateText.setProperty(prop.COLOR, connected ? 0x00e000 : 0xff5500)
+      this.stateText.setProperty(prop.COLOR, connected ? C.ok : C.error)
     }
 
     if (connected) {
@@ -61,66 +62,80 @@ Page({
     logger.log('[ble] reintento solicitado')
 
     this.stateText.setProperty(prop.TEXT, getText('gateSearching'))
-    this.stateText.setProperty(prop.COLOR, 0xaaaaaa)
+    this.stateText.setProperty(prop.COLOR, C.textMuted)
 
     setTimeout(() => this.check(), 600)
   },
 
   buildGate() {
-    createWidget(widget.TEXT, {
+    createWidget(widget.FILL_RECT, {
       x: 0,
-      y: px(50),
+      y: 0,
       w: px(466),
-      h: px(60),
-      text: getText('gateTitle'),
-      align_h: align.CENTER_H,
-      text_style: {
-        text_size: px(56),
-        color: 0xffffff,
-        text_align: align.CENTER_H
-      }
+      h: px(466),
+      color: C.bg
+    })
+
+    // Filete cian sobre el titulo: mismo lenguaje que el chat.
+    createWidget(widget.FILL_RECT, {
+      x: px(211),
+      y: px(40),
+      w: px(44),
+      h: px(6),
+      radius: px(3),
+      color: C.ai
     })
 
     createWidget(widget.TEXT, {
-      x: px(26),
-      y: px(118),
-      w: px(414),
-      h: px(140),
+      x: px(93),
+      y: px(56),
+      w: px(280),
+      h: px(64),
+      text: getText('gateTitle'),
+      align_h: align.CENTER_H,
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(46),
+      char_space: px(4),
+      color: C.text
+    })
+
+    createWidget(widget.TEXT, {
+      x: px(46),
+      y: px(130),
+      w: px(374),
+      h: px(170),
       text: getText('gateBody'),
       align_h: align.CENTER_H,
-      text_style: {
-        text_size: px(38),
-        color: 0xcccccc,
-        text_align: align.CENTER_H,
-        line_spacing: px(10)
-      }
+      text_style: text_style.WRAP,
+      text_size: px(26),
+      color: C.textDim
     })
 
     this.stateText = createWidget(widget.TEXT, {
-      x: px(26),
-      y: px(268),
-      w: px(414),
-      h: px(44),
+      x: px(73),
+      y: px(306),
+      w: px(320),
+      h: px(42),
       text: getText('gateSearching'),
       align_h: align.CENTER_H,
-      text_style: {
-        text_size: px(34),
-        color: 0xaaaaaa,
-        text_align: align.CENTER_H
-      }
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(30),
+      color: C.textMuted
     })
 
     this.retryBtn = createWidget(widget.BUTTON, {
-      x: px(123),
-      y: px(330),
-      w: px(220),
-      h: px(80),
+      x: px(113),
+      y: px(354),
+      w: px(240),
+      h: px(68),
       text: getText('gateRetry'),
-      radius: px(40),
-      normal_color: 0x1f6feb,
-      pressed_color: 0x1550b0,
+      radius: px(34),
+      normal_color: C.accent,
+      press_color: C.accentPressed,
       color: 0xffffff,
-      text_size: px(38),
+      text_size: px(34),
       click_func: this.retry.bind(this)
     })
   },

@@ -10,8 +10,22 @@ import {
 } from '../utils/constants'
 import { limitHistory } from '../utils/message-utils'
 import { reportError } from '../utils/error-utils'
+import { C } from '../utils/theme'
 
 const logger = log.getLogger('chat')
+
+// Maquetacion 466x466: la respuesta de la IA manda. Todo lo demas
+// (marca, barra de entrada y boton) vive por encima y por debajo de la
+// zona de texto, respetando el area segura del circulo.
+const L = {
+  brand: { x: 133, y: 22, w: 200, h: 26 },
+  view: { x: 64, y: 80, w: 340, h: 238 },
+  text: { x: 14, w: 318 },
+  rule: { x: 64, y: 84, w: 5, h: 226 },
+  pill: { x: 93, y: 326, w: 280, h: 54 },
+  pillText: { x: 105, y: 330, w: 256, h: 46 },
+  send: { x: 133, y: 386, w: 200, h: 52 }
+}
 
 // Sin conexion al movil no hay IA: vamos a la pantalla de bloqueo.
 Page({
@@ -59,7 +73,7 @@ Page({
         w: px(426),
         h: px(90),
         text: getText('chatBuildError'),
-        color: 0xff6666,
+        color: C.error,
         text_size: px(30),
         align_h: align.CENTER_H,
         text_style: text_style.NONE
@@ -73,7 +87,7 @@ Page({
       : null
     if (!messageBuilder) {
       this.draftText.setProperty(prop.TEXT, getText('chatNoService'))
-      this.draftText.setProperty(prop.COLOR, 0xff6666)
+      this.draftText.setProperty(prop.COLOR, C.error)
       logger.error('No hay conexión con el servicio del móvil')
       return
     }
@@ -99,86 +113,104 @@ Page({
   // ---------------------------------------------------------------- UI ----
 
   buildUI() {
-    // Boton superior: ENVIAR
-    this.sendBtn = createWidget(widget.BUTTON, {
-      x: px(143),
-      y: px(20),
-      w: px(180),
-      h: px(64),
-      text: getText('chatSend'),
-      radius: px(32),
-      normal_color: 0x1f6feb,
-      pressed_color: 0x1550b0,
-      color: 0xffffff,
-      text_size: px(32),
-      click_func: () => this.send()
+    // Fondo con la identidad propia de ZeppAI (violeta/cian).
+    createWidget(widget.FILL_RECT, {
+      x: 0,
+      y: 0,
+      w: px(466),
+      h: px(466),
+      color: C.bg
     })
 
-    // Historial de la conversacion
+    // Marca discreta arriba: no compite con la respuesta de la IA.
+    createWidget(widget.TEXT, {
+      x: px(L.brand.x),
+      y: px(L.brand.y),
+      w: px(L.brand.w),
+      h: px(L.brand.h),
+      text: getText('gateTitle'),
+      align_h: align.CENTER_H,
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(20),
+      char_space: px(4),
+      color: C.accent
+    })
+
+    // Filete cian a la izquierda del texto: marca lo que es de la IA.
+    createWidget(widget.FILL_RECT, {
+      x: px(L.rule.x),
+      y: px(L.rule.y),
+      w: px(L.rule.w),
+      h: px(L.rule.h),
+      radius: px(3),
+      color: C.ai
+    })
+
+    // Historial de la conversacion (solo respuestas de la IA).
     this.historyViewport = createWidget(widget.VIEW_CONTAINER, {
-      x: px(20),
-      y: px(86),
-      w: px(426),
-      h: px(254),
+      x: px(L.view.x),
+      y: px(L.view.y),
+      w: px(L.view.w),
+      h: px(L.view.h),
       scroll_enable: 1,
       pos_y: 0
     })
-    this._lastContentHeight = px(254)
+    this._lastContentHeight = px(L.view.h)
     this._historyRenderTimer = null
     this._historyRenderPending = false
 
     this.historyText = this.historyViewport.createWidget(widget.TEXT, {
-      x: 0,
+      x: px(L.text.x),
       y: 0,
-      w: px(426),
-      h: px(254),
+      w: px(L.text.w),
+      h: px(L.view.h),
       text: getText('chatEmpty'),
-      color: 0xffffff,
-      text_size: px(28),
+      color: C.textDim,
+      text_size: px(30),
       text_style: text_style.WRAP
     })
 
-    // Zona inferior: borrador, respuesta en streaming o estado
-    this.draftText = createWidget(widget.TEXT, {
-      x: px(43),
-      y: px(346),
-      w: px(380),
-      h: px(36),
+    // Barra de entrada: se ve el borrador (o el estado) y al tocarla
+    // abre el teclado. Abrirlo solo tras tocarlo: algunos firmwares
+    // dejan una pantalla negra si el teclado se crea automaticamente.
+    this.pillBtn = createWidget(widget.BUTTON, {
+      x: px(L.pill.x),
+      y: px(L.pill.y),
+      w: px(L.pill.w),
+      h: px(L.pill.h),
       text: '',
-      align_h: align.CENTER_H,
-      align_v: align.CENTER_V,
-      text_style: text_style.NONE,
-      color: 0x666666,
-      text_size: px(28)
-    })
-
-    // Abrir el teclado solo tras tocarlo: algunos firmwares dejan una pantalla
-    // negra si el teclado del sistema se crea automáticamente al navegar.
-    this.kbBtn = createWidget(widget.BUTTON, {
-      x: px(88),
-      y: px(384),
-      w: px(140),
-      h: px(54),
-      text: getText('chatWrite'),
       radius: px(27),
-      normal_color: 0x2d2d34,
-      pressed_color: 0x48484f,
-      color: 0xffffff,
-      text_size: px(24),
+      normal_color: C.surface,
+      press_color: C.surfacePressed,
       click_func: () => this.openKeyboard()
     })
 
-    this.bottomSendBtn = createWidget(widget.BUTTON, {
-      x: px(238),
-      y: px(384),
-      w: px(140),
-      h: px(54),
+    this.draftText = createWidget(widget.TEXT, {
+      x: px(L.pillText.x),
+      y: px(L.pillText.y),
+      w: px(L.pillText.w),
+      h: px(L.pillText.h),
+      text: '',
+      align_h: align.CENTER_H,
+      align_v: align.CENTER_V,
+      text_style: text_style.ELLIPSIS,
+      text_size: px(24),
+      color: C.textMuted
+    })
+
+    // Accion principal, centrada y dentro del area segura.
+    this.sendBtn = createWidget(widget.BUTTON, {
+      x: px(L.send.x),
+      y: px(L.send.y),
+      w: px(L.send.w),
+      h: px(L.send.h),
       text: getText('chatSend'),
-      radius: px(27),
-      normal_color: 0x1f6feb,
-      pressed_color: 0x1550b0,
+      radius: px(26),
+      normal_color: C.accent,
+      press_color: C.accentPressed,
       color: 0xffffff,
-      text_size: px(26),
+      text_size: px(30),
       click_func: () => this.send()
     })
   },
@@ -191,13 +223,15 @@ Page({
     if (this.state.streaming) answers.push(this.state.streaming)
 
     const transcript = answers.join('\n\n') || getText('chatEmpty')
+    const isEmpty = answers.length === 0
+    const viewportH = px(L.view.h)
 
     const layout = getTextLayout(transcript, {
-      text_size: px(28),
-      text_width: px(426),
+      text_size: px(30),
+      text_width: px(L.text.w),
       wrapped: 1
     })
-    const contentHeight = Math.max(px(254), layout && layout.height ? layout.height + px(12) : px(254))
+    const contentHeight = Math.max(viewportH, layout && layout.height ? layout.height + px(12) : viewportH)
     this._lastContentHeight = contentHeight
 
     // Un solo camino: pintamos texto + altura juntos y anclamos al final.
@@ -208,8 +242,10 @@ Page({
       text: transcript,
       h: contentHeight
     })
+    // Estado vacio tenue; la respuesta de la IA, maximamente legible.
+    this.historyText.setProperty(prop.COLOR, isEmpty ? C.textDim : C.text)
     this.historyViewport.setProperty(prop.MORE, {
-      pos_y: Math.max(0, contentHeight - px(254))
+      pos_y: Math.max(0, contentHeight - viewportH)
     })
   },
 
@@ -280,7 +316,8 @@ Page({
       })
     } catch (error) {
       reportError(logger, '[chat] openKeyboard', error)
-      this.updateState({ draft: getText('chatNoKeyboard') })
+      // No ensuciamos el borrador con el error: la barra ya lo muestra.
+      this.updateState({ draft: '', error: getText('chatNoKeyboard') })
       this.renderDraft()
     }
   },
@@ -387,10 +424,23 @@ Page({
   },
 
   renderDraft() {
-    const { sending, error } = this.state
-    const text = error || (sending ? getText('chatThinking') : '')
+    const { sending, error, draft } = this.state
+    // Una sola barra con tres papeles: borrador, estado de la IA o
+    // placeholder. El error manda porque es lo que hay que leer ya.
+    let text = draft
+    let color = C.text
+    if (error) {
+      text = error
+      color = C.error
+    } else if (sending) {
+      text = getText('chatThinking')
+      color = C.ai
+    } else if (!draft) {
+      text = getText('chatPlaceholder')
+      color = C.textMuted
+    }
     this.draftText.setProperty(prop.TEXT, text)
-    this.draftText.setProperty(prop.COLOR, error ? 0xff7777 : 0xaaaaaa)
+    this.draftText.setProperty(prop.COLOR, color)
   },
 
   onDestroy() {
