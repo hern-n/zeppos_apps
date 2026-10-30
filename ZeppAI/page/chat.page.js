@@ -18,10 +18,13 @@ const logger = log.getLogger('chat')
 // (marca, barra de entrada y boton) vive por encima y por debajo de la
 // zona de texto, respetando el area segura del circulo.
 const L = {
-  brand: { x: 133, y: 22, w: 200, h: 26 },
-  view: { x: 64, y: 80, w: 340, h: 238 },
-  text: { x: 14, w: 318 },
-  rule: { x: 64, y: 84, w: 5, h: 226 },
+  brand: { x: 133, y: 26, w: 200, h: 26 },
+  // El texto de la IA ocupa todo el ancho posible: el limite real es el
+  // borde redondeado, que en la primera linea (y=104) deja x=39..427.
+  view: { x: 42, y: 104, w: 382, h: 216 },
+  text: { x: 0, w: 382 },
+  // Filete fuera del texto, en la franja donde el circulo ya es ancho.
+  rule: { x: 20, y: 140, w: 5, h: 166 },
   pill: { x: 93, y: 326, w: 280, h: 54 },
   pillText: { x: 105, y: 330, w: 256, h: 46 },
   send: { x: 133, y: 386, w: 200, h: 52 }
@@ -113,7 +116,7 @@ Page({
   // ---------------------------------------------------------------- UI ----
 
   buildUI() {
-    // Fondo con la identidad propia de ZeppAI (violeta/cian).
+    // Fondo con la identidad propia de ZeppAI (gama de verdes).
     createWidget(widget.FILL_RECT, {
       x: 0,
       y: 0,
@@ -137,7 +140,7 @@ Page({
       color: C.accent
     })
 
-    // Filete cian a la izquierda del texto: marca lo que es de la IA.
+    // Filete lima a la izquierda del texto: marca lo que es de la IA.
     createWidget(widget.FILL_RECT, {
       x: px(L.rule.x),
       y: px(L.rule.y),
@@ -167,7 +170,7 @@ Page({
       h: px(L.view.h),
       text: getText('chatEmpty'),
       color: C.textDim,
-      text_size: px(30),
+      text_size: px(34),
       text_style: text_style.WRAP
     })
 
@@ -209,7 +212,7 @@ Page({
       radius: px(26),
       normal_color: C.accent,
       press_color: C.accentPressed,
-      color: 0xffffff,
+      color: 0x06140b,
       text_size: px(30),
       click_func: () => this.send()
     })
@@ -227,7 +230,7 @@ Page({
     const viewportH = px(L.view.h)
 
     const layout = getTextLayout(transcript, {
-      text_size: px(30),
+      text_size: px(34),
       text_width: px(L.text.w),
       wrapped: 1
     })

@@ -76,7 +76,7 @@ Page({
       color: C.bg
     })
 
-    // Filete cian sobre el titulo: mismo lenguaje que el chat.
+    // Filete lima sobre el titulo: mismo lenguaje que el chat.
     createWidget(widget.FILL_RECT, {
       x: px(211),
       y: px(40),
@@ -134,7 +134,7 @@ Page({
       radius: px(34),
       normal_color: C.accent,
       press_color: C.accentPressed,
-      color: 0xffffff,
+      color: 0x06140b,
       text_size: px(34),
       click_func: this.retry.bind(this)
     })
