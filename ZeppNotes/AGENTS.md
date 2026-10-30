@@ -33,5 +33,6 @@ zeus build         # alternativa si el zeus local de node_modules falla
 - Tests: asserts con `node:assert` + `import()` dinámico de los módulos ESM (sin jest). Si cambias límites o `note-utils.js`, actualiza `tests/note-utils.test.js`.
 - UI de Zepp OS: `press_color` (no `pressed_color`) en `BUTTON`, `normal_src`+`press_src` van siempre juntos y `text_style` es un enum (`WRAP`/`ELLIPSIS`/`NONE`); `text_size`, `color` y `line_space` van como propiedades superiores del `TEXT`.
 - Redibujado: no existe `setState`; para cambiar una zona se borran sus widgets con `deleteWidget` y se vuelven a crear (patrón de `renderRows`/`render`/`draw`).
+- Shortcut Card: el área de dibujo **no** empieza en el borde de la tarjeta visible. `getAppWidgetSize()` devuelve `w`, `h`, `margin` y `radius`: hay que desplazar el contenido `margin` px (y restar `2*margin` a `w` cuando `w` llega como ancho de pantalla). Comprobarlo con el log `[card] geometry` en el simulador.
 - i18n (best practice): todo texto visible vía `getText()` con claves en `page/i18n/es-ES.po` y `en-US.po` (ambos completos). Los logs siguen en español, no son UI.
 - Errores (best practice): catches de lifecycles con `reportError` de `utils/error-utils.js` (pila línea por línea); `app.js` usa `log.getLogger`, nunca `console`.
