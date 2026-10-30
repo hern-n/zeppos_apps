@@ -156,6 +156,19 @@ AppWidget({
     const row1Y = pad + px(L.headerH) + px(L.headerGap)
     const row2Y = row1Y + rowH + px(L.rowGap)
 
+    // Toda la tarjeta abre la app: boton invisible con click_func (el
+    // mismo mecanismo que ya funciona en el Widget), colocado el primero
+    // para que quede por debajo del resto de widgets.
+    this.track(createWidget(widget.BUTTON, {
+      x: 0,
+      y: 0,
+      w: W,
+      h: this.cardH,
+      normal_src: IMG.tap,
+      press_src: IMG.tap,
+      click_func: () => this.open()
+    }))
+
     // Cabecera: nombre a la izquierda, contador a la derecha, alineados
     // con los bordes de las filas.
     this.clickable(this.track(createWidget(widget.TEXT, {
@@ -209,7 +222,7 @@ AppWidget({
   drawRow(note, y, left, rowW, rowH) {
     const pinned = note.important === true
 
-    this.clickable(this.track(createWidget(widget.BUTTON, {
+    this.track(createWidget(widget.BUTTON, {
       x: left,
       y,
       w: rowW,
@@ -217,8 +230,9 @@ AppWidget({
       text: '',
       radius: px(16),
       normal_color: pinned ? C.surfaceWarm : C.surface,
-      press_color: pinned ? C.surfaceWarmPressed : C.surfacePressed
-    })))
+      press_color: pinned ? C.surfaceWarmPressed : C.surfacePressed,
+      click_func: () => this.open()
+    }))
 
     const starW = pinned ? px(48) + px(10) : 0
 

@@ -26,5 +26,6 @@ export const IMG = {
   fab: 'icons/fab.png',
   fabPress: 'icons/fab-press.png',
   starOn: 'icons/star-on.png',
-  starOff: 'icons/star-off.png'
+  starOff: 'icons/star-off.png',
+  tap: 'icons/tap.png'
 }
